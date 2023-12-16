@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>輸入框示例</title>
+    <script src="https://d3js.org/d3.v6.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3.layout.cloud.js"></script>
 </head>
 <body>
     <form id="myForm">
@@ -38,21 +40,60 @@
             .catch(error => {
                 console.error('Error:', error);
             });
+
+            // 使用 AJAX 發送 GET 請求
+            fetch('/get')
+                .then(response => response.json())
+                .then(data => {
+                    // 在這裡處理伺服器的回應
+                    console.log(data);
+
+                    //d3
+                    function renderData(data) {
+                        var margin = {top: 10, right: 10, bottom: 10, left: 10},
+                            width = 450 - margin.left - margin.right,
+                            height = 450 - margin.top - margin.bottom;
+
+                        const svg = d3.select('body').append('svg')
+                            .attr("width", width + margin.left + margin.right)
+                            .attr("height", height + margin.top + margin.bottom)
+                            .append("g")
+                            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                        var layout = d3.layout.cloud()
+                            .size([width, height])
+                            .words(dataArray.map(function(d) { return {text: d}; }))
+                            .padding(10)
+                            .fontSize(60)
+                            .on("end", draw);
+                        layout.start();
+
+                        function draw(words) {
+                            svg
+                            .append("g")
+                            .attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
+                            .selectAll("text")
+                                .data(words)
+                            .enter().append("text")
+                                .style("font-size", function(d) { return d.size + "px"; })
+                                .attr("text-anchor", "middle")
+                                .attr("transform", function(d) {
+                                    return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                                })
+                                .text(function(d) { return d.text; });
+                            }
+                    }
+
+                    const dataArray = 'inputs' in data ? data.inputs : [];
+                    renderData(dataArray);
+
+                    // // 更新前端頁面
+                    // document.getElementById('output').innerText = `伺服器回應：${data.message}`;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
         }
-
-        // 使用 AJAX 發送 GET 請求
-        fetch('/get')
-            .then(response => response.json())
-            .then(data => {
-                // 在這裡處理伺服器的回應
-                console.log(data);
-
-                // 更新前端頁面
-                document.getElementById('output').innerText = `伺服器回應：${data.message}`;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
     </script>
 </body>
 </html>

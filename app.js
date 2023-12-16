@@ -28,9 +28,20 @@ app.post('/post', async (req, res) => {
 });
 
 // 處理 GET 請求
-app.get('/get', (req, res) => {
-    // 在這裡處理 GET 請求，從資料庫中取得數據，並回傳相應的回應
-    res.json({ message: '這是從伺服器獲取的數據' });
+app.get('/get', async (req, res) => {
+    try {
+        // 從 MongoDB 中檢索數據
+        const data = await db.find();
+    
+        // 提取 input 的值
+        const inputs = data.map(entry => entry.input);
+    
+        // 將檢索到的數據發送給客戶端
+        res.json({ success: true, inputs });
+        } catch (error) {
+        console.error('Error fetching data from MongoDB:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+        }
 });
 
 // 根路徑處理程序
