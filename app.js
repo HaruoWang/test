@@ -1,10 +1,9 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const db = require('./db');
 const app = express();
 const port = 3000;
 
-app.use(bodyParser.json());
+app.use(express.json());
 
 // 將靜態文件夾指定為 'public'
 app.use(express.static('public'));
