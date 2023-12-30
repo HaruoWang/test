@@ -7,7 +7,9 @@ const port = process.env.PORT || 8080;
 app.use(express.json());
 
 // 將靜態文件夾指定為 'public'
-app.use(express.static('public'));
+// app.use(express.static('public'));
+
+app.use(express.static(__dirname + '/public'));
 
 app.post('/post', async (req, res) => {
     try {
@@ -20,7 +22,7 @@ app.post('/post', async (req, res) => {
         // 將文檔保存到數據庫
         await database.save();
 
-        res.json({ message: `Hello, ${input}! Your form is submitted and saved to MongoDB.` });
+        res.json({ message: `${input}` });
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'Internal Server Error' });

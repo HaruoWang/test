@@ -4,18 +4,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>輸入框示例</title>
+    <link href="/style.css" type="text/css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@200&family=Oswald:wght@200&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/ScrollTrigger.min.js"></script>
     <script src="https://d3js.org/d3.v6.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3.layout.cloud.js"></script>
 </head>
 <body>
-    <form id="myForm">
-        <label for="input">請輸入資料：</label>
-        <input type="text" id="input" required>
-        <br>
-        <button type="button" onclick="submitForm()">提交</button>
-    </form>
 
-    <div id="output"></div>
+    <div id="before">
+
+        <div class="ux">
+            <div class="down"></div>
+            <h1 class="hint">向下瀏覽以開始遊玩</h1>
+        </div>
+
+        <img class="d1" src="/img/d1.png" alt="demo1">
+        <img class="d2" src="/img/d2.jpg" alt="demo2">
+
+        <form class="myForm">
+            <input type="text" id="input" placeholder="猜她喜歡聽什麼歌？" required>
+            <button type="button" onclick="submitForm()">✓</button>
+        </form>
+
+    </div>
+
+    <script>
+
+        gsap.to(".ux", {
+            opacity: 0,
+            scrollTrigger: {
+                trigger: ".d1",
+                start: "top top",
+                end: "+=1000",
+                scrub: 1,
+                pin: true,
+            }
+        });
+
+        gsap.from(".d1", {
+            x: -300,
+            opacity: 0,
+            scrollTrigger: {
+                trigger: ".d1",
+                start: "top top",
+                end: "+=1000",
+                scrub: 1,
+                pin: true,
+            },
+        });
+
+        gsap.from(".d2", {
+            x: 300,
+            opacity: 0,
+            scrollTrigger: {
+                trigger: ".d2",
+                start: "top top",
+                end: "+=1000",
+                scrub: 1,
+                pin: true,
+            },
+        });
+    
+        gsap.from(".myForm", {
+            opacity: 0,
+            scrollTrigger: {
+                trigger: ".d1",
+                start: "top top",
+                end: "+=1000",
+                scrub: 1,
+                pin: true,
+                // onUpdate: (self) => {
+                // if (self.progress >= 0.9) {
+                //     document.body.style.overflow = "hidden";
+                // } else {
+                //     document.body.style.overflow = "auto";
+                // }
+                // },
+            }
+        });
+    
+    </script>
+
+    <h1 id="output"></h1>
+    <h1 id="other"></h1>
+    <div class="d3"></div>
 
     <script>
         function submitForm() {
@@ -29,16 +105,19 @@
                 },
                 body: JSON.stringify({ input }),
             })
-            .then(response => response.json())
-            .then(data => {
-                // 在這裡處理伺服器的回應
-                console.log(data);
+                .then(response => response.json())
+                .then(data => {
+                    // 在這裡處理伺服器的回應
+                    console.log(data);
 
-                // 更新前端頁面
-                document.getElementById('output').innerText = `伺服器回應：${data.message}`;
-            })
-            .catch(error => {
-                console.error('Error:', error);
+                    // 更新前端頁面
+                    document.getElementById('output').innerText = `你猜的是：${data.message}`;
+                    document.getElementById('output').insertAdjacentHTML('afterend', '<img class="list" src="/img/yabe.jpg" alt="yabe">');
+                    document.getElementById('other').innerText = `瞧瞧其他人猜了什麼：`;
+                    document.getElementById('before').style.display = "none";
+                })
+                .catch(error => {
+                    console.error('Error:', error);
             });
 
             // 使用 AJAX 發送 GET 請求
@@ -50,45 +129,101 @@
 
                     //d3
                     function renderData(data) {
-                        var margin = {top: 10, right: 10, bottom: 10, left: 10},
-                            width = 450 - margin.left - margin.right,
-                            height = 450 - margin.top - margin.bottom;
 
-                        const svg = d3.select('body').append('svg')
-                            .attr("width", width + margin.left + margin.right)
-                            .attr("height", height + margin.top + margin.bottom)
-                            .append("g")
-                            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                    const fill = d3.scaleOrdinal(d3.schemePuRd[3]);
+                    
+                    const pcWidth = 600;
+                    const pcHeight = 600;
 
-                        var layout = d3.layout.cloud()
-                            .size([width, height])
-                            .words(dataArray.map(function(d) { return {text: d}; }))
-                            .padding(10)
-                            .fontSize(60)
-                            .on("end", draw);
-                        layout.start();
+                    const margin = { top: 10, right: 10, bottom: 10, left: 10 },
+                        width = pcWidth - margin.left - margin.right,
+                        height = pcHeight - margin.top - margin.bottom;
 
-                        function draw(words) {
+                    const svg = d3.select('.d3').append('svg');
+
+                    const mq = window.matchMedia("(max-width: 768px)");
+
+                    function rwd1(mq) {
+                        if (mq.matches) {
                             svg
-                            .append("g")
-                            .attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
-                            .selectAll("text")
-                                .data(words)
-                            .enter().append("text")
-                                .style("font-size", function(d) { return d.size + "px"; })
-                                .attr("text-anchor", "middle")
-                                .attr("transform", function(d) {
-                                    return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
-                                })
-                                .text(function(d) { return d.text; });
-                            }
+                                .attr("width", pcWidth / 2)
+                                .attr("height", pcHeight / 2)
+                                .append("g")
+                                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                        } else {
+                            svg
+                                .attr("width", pcWidth)
+                                .attr("height", pcHeight)
+                                .append("g")
+                                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");                                
+                        }
                     }
 
-                    const dataArray = 'inputs' in data ? data.inputs : [];
-                    renderData(dataArray);
+                    rwd1(mq);
+                    mq.addListener(rwd1);
 
-                    // // 更新前端頁面
-                    // document.getElementById('output').innerText = `伺服器回應：${data.message}`;
+                    const root = d3.hierarchy({ children: data })
+                        .sum(d => d.length); 
+
+                    const pack = d3.pack()
+                        .size([width, height])
+                        .padding(40);
+
+                    const packedData = pack(root).descendants().slice(1);
+                    console.log(packedData);
+
+                    const circles = svg.selectAll('circle')
+                        .data(packedData)
+                        .enter().append('circle')                
+                        .style('fill', (d, i) => fill(i));
+                    
+                    function rwd2(mq) {  
+                        if (mq.matches) {
+                            circles
+                                .attr('cx', d => d.x / 2)
+                                .attr('cy', d => d.y / 2)                            
+                                .attr('r', d => d.r / 2 + 5)
+                        } else {
+                            circles
+                                .attr('cx', d => d.x)
+                                .attr('cy', d => d.y)                            
+                                .attr('r', d => d.r + 10)
+                        }
+                    }
+
+                    rwd2(mq);
+                    mq.addListener(rwd2);
+
+                    const labels = svg.selectAll('text')
+                        .data(packedData)
+                        .enter().append('text')                        
+                        .attr('text-anchor', 'middle')
+                        .attr('alignment-baseline', 'middle')                        
+                        .text(d => d.data);
+
+                    function rwd3(mq) {  
+                        if (mq.matches) {
+                            labels
+                                .attr('x', d => d.x / 2)
+                                .attr('y', d => d.y / 2)                            
+                                .style('font-size', d => `${d.r / 6 + 1.5}px`)
+                        } else {
+                            labels
+                                .attr('x', d => d.x)
+                                .attr('y', d => d.y)
+                                .style('font-size', d => `${d.r / 3 + 3}px`)
+                        }
+                    }
+
+                    rwd3(mq);
+                    mq.addListener(rwd3);
+                }
+
+                    const dataArray = 'inputs' in data ? data.inputs : [];
+                    const data20 = dataArray.slice(-21, -1);
+                    console.log(data20);
+                    renderData(data20);
+
                 })
                 .catch(error => {
                     console.error('Error:', error);
