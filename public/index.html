@@ -19,11 +19,13 @@
 
         <div class="ux">
             <div class="down"></div>
-            <h1 class="hint">向下瀏覽以開始遊玩</h1>
+            <h1 class="hint">向下瀏覽以開始探究</h1>
         </div>
 
-        <img class="d1" src="https://i.imgur.com/7ctlJoK.png" alt="demo1">
-        <img class="d2" src="https://i.imgur.com/AaXocPG.jpg" alt="demo2">
+        <div class="demo">
+            <img class="d1" src="https://i.imgur.com/7ctlJoK.png" alt="demo1">
+            <img class="d2" src="https://i.imgur.com/AaXocPG.jpg" alt="demo2">
+        </div>
 
         <form class="myForm">
             <input type="text" id="input" placeholder="猜她喜歡聽什麼歌？" required>
@@ -39,51 +41,32 @@
             scrollTrigger: {
                 trigger: ".d1",
                 start: "top top",
-                end: "+=1000",
+                end: "+=300",
                 scrub: 1,
                 pin: true,
             }
         });
 
-        gsap.from(".d1", {
-            x: -300,
-            opacity: 0,
+        gsap.from(".d2", {
+            opacity: 0.25,
+            y: 0,
             scrollTrigger: {
                 trigger: ".d1",
                 start: "top top",
-                end: "+=1000",
+                end: "bottom top",
                 scrub: 1,
                 pin: true,
             },
         });
 
-        gsap.from(".d2", {
-            x: 300,
-            opacity: 0,
-            scrollTrigger: {
-                trigger: ".d2",
-                start: "top top",
-                end: "+=1000",
-                scrub: 1,
-                pin: true,
-            },
-        });
-    
         gsap.from(".myForm", {
             opacity: 0,
             scrollTrigger: {
                 trigger: ".d1",
                 start: "top top",
-                end: "+=1000",
+                end: "+=300",
                 scrub: 1,
                 pin: true,
-                // onUpdate: (self) => {
-                // if (self.progress >= 0.9) {
-                //     document.body.style.overflow = "hidden";
-                // } else {
-                //     document.body.style.overflow = "auto";
-                // }
-                // },
             }
         });
     

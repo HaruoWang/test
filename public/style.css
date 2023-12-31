@@ -56,7 +56,7 @@ body {
 .down {
     position: fixed;
 	height: 8vw;
-    top: 35%;
+    top: 25%;
     left: 50%;
     transform: translate(-50%, -35%);
 	border: 0.1vw solid #333;
@@ -103,32 +103,32 @@ body {
 
 .hint {
     position: fixed;
-    top: 50%;
+    top: 25%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%);
+}
+
+.demo {
+    position: relative;
+    height: 100vh;
 }
 
 .d1 {
     z-index: -1;
-	position: absolute;
-	width: 33%; 
-    top: 50%!important;
+    position: relative;
+    height: 100vh;
+    top: 150%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
 
 .d2 {
     z-index: -2;
-	position: absolute;
-	width: 33%; 
-    top: 50%!important;
+	position: fixed;
+	height: 100vh; 
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-	/* z-index: -2;
-	position: relative;
-	width: 33%; 
-    left: 50%;
-    transform: translate(-50%); */
 }
 
 .myForm {
@@ -169,24 +169,27 @@ h1 {
 
 @media(max-width: 768px) {
     .hint {
-        writing-mode: vertical-rl;
-        -webkit-writing-mode: vertical-rl;
+        display: none;
     }
     .d1 {
-        z-index: -1;
-        position: absolute;
-        width: 75%; 
-        top: 50%!important;
-        left: 50%;
-        transform: translate(-50%, -50%);
+        position: fixed;
+        max-width: 100vw!important;
+        max-height: 75vh!important;
+        inset: 0!important;
+        transform: translate(0%, 40%)!important;
     }
     .d2 {
-        z-index: -2;
-        position: absolute;
-        width: 75%; 
+        position: fixed;
+        max-width: 100vw!important;
+        inset: 0!important;
+        transform: translate(0%, 0%)!important;
+    }
+    .pin-spacer {
+        position: fixed!important;
+        width: 100vw!important;
         top: 50%!important;
-        left: 50%;
-        transform: translate(-50%, -50%);
+        left: 50%!important;
+        transform: translate(-50%, -50%)!important;
     }
     .list {
         position: relative;
