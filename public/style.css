@@ -48,9 +48,13 @@ table {
 }
 
 body {
-    background: #F5F5F5;
+    background: #8A6B99;
     font-family: 'Oswald', 'Noto Sans TC', sans-serif;
     overflow-x: hidden;
+}
+
+h1 {
+    color: #ffffff;
 }
 
 .down {
@@ -59,7 +63,7 @@ body {
     top: 25%;
     left: 50%;
     transform: translate(-50%, -35%);
-	border: 0.1vw solid #333;
+	border: 0.1vw solid #ffffff;
     -webkit-animation: scroll 1.5s infinite;
     animation: scroll 1.5s infinite;
 }
@@ -72,7 +76,7 @@ body {
     left: -5px;
     width: 1px;
     height: 10px;
-    border-top: 10px solid #333;
+    border-top: 10px solid #ffffff;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
 }
